@@ -129,3 +129,39 @@ Please provide up to 3 sentences for each suggestion. Additional content in your
 ### Best Practices
 * Dockerfile uses an appropriate base image for the application being deployed. Complex commands in the Dockerfile include a comment describing what it is doing.
 * The Docker images use semantic versioning with three numbers separated by dots, e.g. `1.2.1` and  versioning is visible in the  screenshot. See [Semantic Versioning](https://semver.org/) for more details.
+
+
+### solution
+1. Login Aws -> create user with role admin
+2. Login with aws cli: aws configure
+3. create cluster with eksctl command: eksctl create cluster --name my-cluster --region us-east-1 --nodegroup-name my-nodes --node-type t3.small --nodes 1 --nodes-min 1 --nodes-max 2
+4. Update the Kubeconfig: aws eks --region us-east-1 update-kubeconfig --name my-cluster
+5. check config: kubectl config view
+6. Configure a Database for the Service (Postgres service):
+    - Create PersistentVolumeClaim
+    - Create PersistentVolume
+    - Create Postgres Deployment
+    - Apply YAML configurations
+    - Test Database Connection
+    - Run Seed Files: export DB_PASSWORD=mypassword
+        PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U myuser -d mydatabase -p 5433 < <FILE_NAME.sql>
+7. Set Up SSH Key on github
+8. Build the Analytics Application Locally
+    - Install Dependencies with python
+    - Set up port-forwarding to `postgresql-service`: kubectl port-forward service/postgresql-service 5433:5432 &
+    - create variable enviroment:
+        export DB_USERNAME=myuser
+        export DB_PASSWORD=${POSTGRES_PASSWORD}
+        export DB_HOST=127.0.0.1
+        export DB_PORT=5433
+        export DB_NAME=mydatabase
+9. deployment:
+    - create a buildspec.yaml
+    - create buid project on codebuid:
+        + connect with GitHub repository
+    - run build
+    - update file: deployment/configmap.yaml, deployment/coworking.yaml
+    - kubectl apply file
+
+## Base URL
+- 
