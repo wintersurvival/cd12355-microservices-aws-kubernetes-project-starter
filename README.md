@@ -129,3 +129,24 @@ Please provide up to 3 sentences for each suggestion. Additional content in your
 ### Best Practices
 * Dockerfile uses an appropriate base image for the application being deployed. Complex commands in the Dockerfile include a comment describing what it is doing.
 * The Docker images use semantic versioning with three numbers separated by dots, e.g. `1.2.1` and  versioning is visible in the  screenshot. See [Semantic Versioning](https://semver.org/) for more details.
+
+### Solution
+1. Set ssh public key in github, and fork and clone repository
+2. Login with AWS CLI `aws configure` and check with AWS CLI `aws sts get-caller-identity`
+3. Create cluster with eksctl command `eksctl create cluster --name my-cluster --region us-east-1 --nodegroup-name my-nodes --node-type t3.small --nodes 1 --nodes-min 1 --nodes-max 2`, and update kubeconfig `aws eks --region us-east-1 update-kubeconfig --name my-cluster`, and then check the kubeconfig `kubectl config current-context` or `kubectl config view`
+3. Configure a Database for the Service (postgresql service):
+    - Create PersistentVolumeClaim YAML, PersistentVolume YAML file and Postgres Deployment YAML file, and apply the above YAML configuration files
+    - Test Database Connection
+    - Run Seed Files
+7. Build the analytics application locally
+    - Install dependencies with apt and pip.
+    - Set variable enviroment, and run the application with `python app.py`, and set up port-forwarding to "postgresql-service" by `kubectl port-forward service/postgresql-service 5433:5432 &`
+9. Deployment:
+    - Create an Amazon ECR repository on AWS console, create buildspec.yaml and create an Amazon CodeBuild project that is connected to project's GitHub repository
+    - Run build
+    - Update YAML files: `deployment/configmap.yaml`, `deployment/coworking.yaml` and kubectl apply YAML files
+10. CloudWatch logging:
+    - Attach the CloudWatchAgentServerPolicy IAM policy to worker nodes
+	- Use AWS CLI to install the Amazon CloudWatch Observability EKS add-on
+	- Trigger logging by accessing application
+	- Open up CloudWatch Log groups page
